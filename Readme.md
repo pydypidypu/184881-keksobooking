@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Алина Свириденко](https://up.htmlacademy.ru/javascript/11/user/184881).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр Степанченко](https://htmlacademy.ru/profile/id225726).
 
 ---
 
