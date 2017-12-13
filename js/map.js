@@ -1,5 +1,6 @@
 /* global Utils */
 /* global Data */
+
 'use strict';
 
 window.Map = (function () {
@@ -70,14 +71,82 @@ window.Map = (function () {
     var fieldsets = noticeForm.querySelectorAll('fieldset');
 
     for (var i = 0; i < fieldsets.length; i++) {
-      if (fieldsets[i].hasAttribute('disabled')) {
-        fieldsets[i].removeAttribute('disabled');
-      } else {
-        fieldsets[i].setAttribute('disabled', 'disabled');
-      }
+      fieldsets[i].removeAttribute('disabled');
     }
 
     noticeForm.classList.remove('notice__form--disabled');
+  };
+
+  var ESC_KEYCODE = 27;
+
+  var closePopup = function (event) {
+    if (event.keyCode === ESC_KEYCODE || event.type === 'click') {
+      var popup = document.querySelector('.map__card');
+      popup.remove();
+      document.querySelector('.map__pin--active').classList.remove('map__pin--active');
+    }
+  };
+
+  var timeChange = function (time1, time2) {
+    var selectedIndex = time1.options.selectedIndex;
+    time2.options[selectedIndex].selected = true;
+  };
+
+  var priceChange = function () {
+    if (price.value >= 10000) {
+      inputType.options[3].selected = true;
+
+      return;
+    }
+
+    if (price.value >= 5000 && price.value < 10000) {
+      inputType.options[2].selected = true;
+
+      return;
+    }
+
+    if (price.value >= 1000 && price.value < 5000) {
+      inputType.options[0].selected = true;
+    }
+
+    if (price.value < 1000) {
+      inputType.options[1].selected = true;
+    }
+  };
+
+  var capacity = document.querySelector('#capacity');
+  var roomNumber = document.querySelector('#room_number');
+  var roomNumberMax = roomNumber.options[3].value;
+
+  var roomNumberChange = function () {
+    var roomNumberValue = roomNumber.options[roomNumber.selectedIndex].value;
+    var capacityValue = capacity.options[capacity.selectedIndex].value;
+    roomNumber.style.outline = 'none';
+
+    if (roomNumberValue >= capacityValue && capacityValue !== '0') {
+      if (roomNumberValue === roomNumberMax && capacityValue !== '0') {
+        capacity.options[3].selected = true;
+      }
+
+      return;
+    } else {
+
+      for (var k = 0; k < capacity.options.length; k++) {
+
+        if (capacity.options[k].value === roomNumberValue) {
+          capacity.options[k].selected = true;
+        }
+      }
+    }
+  };
+
+  var validForm = function (event) {
+    var roomNumberValue = roomNumber.options[roomNumber.selectedIndex].value;
+    var capacityValue = capacity.options[capacity.selectedIndex].value;
+    if ((roomNumberValue !== roomNumberMax && capacityValue === '0') || (roomNumberValue < capacityValue)) {
+      roomNumber.style.outline = '2px solid rgba(255,0,0,0.5)';
+      event.preventDefault();
+    }
   };
 
   var initMap = function () {
@@ -123,16 +192,20 @@ window.Map = (function () {
 
   };
 
-  var ESC_KEYCODE = 27;
-
-  var closePopup = function (event) {
-    if (event.keyCode === ESC_KEYCODE || event.type === 'click') {
-      var popup = document.querySelector('.map__card');
-      popup.remove();
-      document.querySelector('.map__pin--active').classList.remove('map__pin--active');
-    }
-  };
-
   document.querySelector('.map__pin--main').addEventListener('click', initMap);
   document.addEventListener('keydown', closePopup);
+
+  var timein = document.querySelector('#timein');
+  var timeout = document.querySelector('#timeout');
+  timein.addEventListener('change', timeChange.bind(null, timein, timeout));
+  timeout.addEventListener('change', timeChange.bind(null, timeout, timein));
+
+  var price = document.querySelector('#price');
+  var inputType = document.querySelector('#type');
+  price.addEventListener('change', priceChange);
+
+  var formSubmit = document.querySelector('.form__submit');
+  roomNumber.addEventListener('change', roomNumberChange);
+  formSubmit.addEventListener('click', validForm);
+
 })();
