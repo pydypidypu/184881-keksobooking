@@ -118,31 +118,24 @@ window.Map = (function () {
   var roomNumber = document.querySelector('#room_number');
   var roomNumberMax = roomNumber.options[3].value;
 
-  var roomNumberChange = function () {
-    var roomNumberValue = roomNumber.options[roomNumber.selectedIndex].value;
-    var capacityValue = capacity.options[capacity.selectedIndex].value;
+  var roomNumberCorrect = function () {
+    var roomNumberValue = +roomNumber.value;
+    var capacityValue = +capacity.value;
     roomNumber.style.outline = 'none';
 
-    if (roomNumberValue >= capacityValue && capacityValue !== '0') {
-      if (roomNumberValue === roomNumberMax && capacityValue !== '0') {
-        capacity.options[3].selected = true;
-      }
-
-      return;
-    } else {
-
-      for (var k = 0; k < capacity.options.length; k++) {
-
-        if (capacity.options[k].value === roomNumberValue) {
-          capacity.options[k].selected = true;
-        }
-      }
+    if (roomNumberValue < capacityValue) {
+      capacity.value = roomNumberValue;
     }
+
+    if (roomNumberValue === roomNumberMax) {
+      capacity.value = 0;
+    }
+
   };
 
   var validForm = function (event) {
-    var roomNumberValue = roomNumber.options[roomNumber.selectedIndex].value;
-    var capacityValue = capacity.options[capacity.selectedIndex].value;
+    var roomNumberValue = roomNumber.value;
+    var capacityValue = capacity.value;
     if ((roomNumberValue !== roomNumberMax && capacityValue === '0') || (roomNumberValue < capacityValue)) {
       roomNumber.style.outline = '2px solid rgba(255,0,0,0.5)';
       event.preventDefault();
@@ -205,7 +198,7 @@ window.Map = (function () {
   price.addEventListener('change', priceChange);
 
   var formSubmit = document.querySelector('.form__submit');
-  roomNumber.addEventListener('change', roomNumberChange);
+  roomNumber.addEventListener('change', roomNumberCorrect);
   formSubmit.addEventListener('click', validForm);
-
+  roomNumberCorrect();
 })();
